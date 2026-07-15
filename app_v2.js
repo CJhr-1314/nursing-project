@@ -402,7 +402,7 @@ createApp({
           <input type="number" v-model.number="questionCount" min="5" max="510">\
           <span class="text-sm">题</span>\
         </div>\
-        <div class="text-sm mt-12" style="color:#999">\
+        <div class="text-sm mt-12" style="color:var(--color-text-muted)">\
           当前章节共 {{ ALL_QUESTIONS.filter(function(q){return selectedChapters.includes(q.chapter)}).length }} 题可选\
         </div>\
       </div>\
@@ -416,7 +416,7 @@ createApp({
       </button>\
       <div v-if="history.length" class="card mt-16">\
         <div class="card-title">历史记录</div>\
-        <div v-for="(h, i) in history.slice(0,10)" :key="i" class="flex-between" style="padding:8px 0;border-bottom:1px solid #f0f0f0">\
+        <div v-for="(h, i) in history.slice(0,10)" :key="i" class="flex-between" style="padding:8px 0;border-bottom:1px solid var(--color-border-light)">\
           <span class="text-sm">{{ formatDate(h.date) }}</span>\
           <span :class="h.correct/h.total >= 0.8 ? \'text-green\' : h.correct/h.total >= 0.6 ? \'text-orange\' : \'text-red\'" style="font-weight:600">\
             {{ h.correct }}/{{ h.total }} ({{ Math.round(h.correct/h.total*100) }}%)\
@@ -429,21 +429,21 @@ createApp({
       <button class="btn btn-outline mb-16" @click="goSetup">← 返回首页</button>\
       <div class="card">\
         <div class="card-title">真题试卷</div>\
-        <div class="text-sm mb-16" style="color:#999">历年护理责任组长竞聘考试真题，全卷模拟实战</div>\
+        <div class="text-sm mb-16" style="color:var(--color-text-muted)">历年护理责任组长竞聘考试真题，全卷模拟实战</div>\
         <div v-for="year in examYears" :key="year" class="exam-card" @click="startExam(year)">\
           <div class="flex-between">\
             <div>\
               <div style="font-size:18px;font-weight:700;margin-bottom:4px">{{ getExamStats(year).title }}</div>\
-              <div class="text-sm" style="color:#666">{{ getExamStats(year).questionCount }} 题 · 原卷顺序</div>\
+              <div class="text-sm">{{ getExamStats(year).questionCount }} 题 · 原卷顺序</div>\
             </div>\
             <div style="text-align:right">\
               <div v-if="getExamStats(year).bestRate !== null" class="text-sm">\
-                <span style="color:#27ae60;font-weight:600">最佳 {{ getExamStats(year).bestRate }}%</span>\
+                <span style="color:var(--color-success);font-weight:600">最佳 {{ getExamStats(year).bestRate }}%</span>\
               </div>\
-              <div v-if="getExamStats(year).attemptCount" class="text-sm" style="color:#999">\
+              <div v-if="getExamStats(year).attemptCount" class="text-sm" style="color:var(--color-text-muted)">\
                 已做 {{ getExamStats(year).attemptCount }} 次\
               </div>\
-              <div v-if="getExamStats(year).bestRate === null" class="text-sm" style="color:#e67e22">\
+              <div v-if="getExamStats(year).bestRate === null" class="text-sm" style="color:var(--color-warning)">\
                 未练习\
               </div>\
             </div>\
@@ -456,49 +456,52 @@ createApp({
     </div>\
     \
     <div v-if="page === \'quiz\' && !showResult">\
-      <div class="flex-between mb-12">\
-        <span class="text-sm">{{ currentIndex + 1 }} / {{ sessionQuestions.length }}</span>\
-        <div class="flex-row" style="gap:8px">\
-          <span v-if="isExamMode" class="tag" style="background:#fdecea;color:#c0392b;font-size:11px">真题模式</span>\
-          <button class="star-btn" :class="{ starred: isStarred(currentQuestion?.id) }"\
-            @click="toggleStar(currentQuestion?.id)">{{ isStarred(currentQuestion?.id) ? \'★\' : \'☆\' }}</button>\
-          <span class="text-sm" style="color:#999">{{ Object.keys(answers).length }}题已答</span>\
+      <div class="quiz-top-bar">\
+        <div class="flex-between">\
+          <span class="text-sm" style="font-weight:600">{{ currentIndex + 1 }} / {{ sessionQuestions.length }}</span>\
+          <div class="flex-row" style="gap:8px">\
+            <span v-if="isExamMode" class="tag" style="background:var(--color-exam-bg);color:var(--color-exam);font-size:11px">真题模式</span>\
+            <button class="star-btn" :class="{ starred: isStarred(currentQuestion?.id) }"\
+              @click="toggleStar(currentQuestion?.id)">{{ isStarred(currentQuestion?.id) ? \'★\' : \'☆\' }}</button>\
+            <span class="text-sm" style="color:var(--color-text-muted)">{{ Object.keys(answers).length }}题已答</span>\
+          </div>\
         </div>\
+        <div class="progress-bar"><div class="progress-fill" :style="{ width: progressPercent + \'%\' }"></div></div>\
       </div>\
-      <div class="progress-bar"><div class="progress-fill" :style="{ width: progressPercent + \'%\' }"></div></div>\
       \
-      <div v-if="currentQuestion" class="card">\
+      <div v-if="currentQuestion" class="card" style="margin-top:var(--space-sm)">\
         <div class="q-meta">\
           <span class="q-type" :class="currentQuestion.type">{{ getTypeLabel(currentQuestion.type) }}</span>\
           <span class="q-num">{{ isExamMode ? \'第\' + (currentQuestion.examIndex + 1) + \'题\' : currentQuestion.chapter }}</span>\
-          <span v-if="currentQuestion.type === \'multi\'" style="color:#8e44ad;font-size:12px">（多选）</span>\
+          <span v-if="currentQuestion.type === \'multi\'" style="color:#7C3AED;font-size:12px;font-weight:600">（多选）</span>\
         </div>\
-        <div style="font-size:16px;line-height:1.7;margin-bottom:16px;white-space:pre-wrap">{{ currentQuestion.question }}</div>\
+        <div style="font-size:18px;line-height:1.75;margin-bottom:20px;white-space:pre-wrap;color:var(--color-text);font-weight:500">{{ currentQuestion.question }}</div>\
         \
         <div v-for="(val, key) in currentQuestion.options" :key="key"\
           class="option" :class="getOptionClass(key)"\
           @click="selectAnswer(key)">\
           <span class="opt-label">{{ key }}</span>\
-          <span style="flex:1">{{ val }}</span>\
+          <span style="flex:1;padding-top:2px">{{ val }}</span>\
         </div>\
       </div>\
       \
-      <div class="flex-row mt-12" style="gap:12px">\
-        <button class="btn btn-outline" style="flex:1" @click="goPrev" :disabled="currentIndex === 0">上一题</button>\
-        <button v-if="currentIndex < sessionQuestions.length - 1" class="btn btn-primary" style="flex:1" @click="goNext">下一题</button>\
-        <button v-else class="btn btn-danger" style="flex:1" @click="submitQuiz">提交答卷</button>\
+      <div class="quiz-bottom-bar">\
+        <div class="flex-row" style="gap:12px">\
+          <button class="btn btn-outline" style="flex:1" @click="goPrev" :disabled="currentIndex === 0">上一题</button>\
+          <button v-if="currentIndex < sessionQuestions.length - 1" class="btn btn-primary" style="flex:1" @click="goNext">下一题</button>\
+          <button v-else class="btn btn-danger" style="flex:1" @click="submitQuiz">提交答卷</button>\
+        </div>\
       </div>\
       \
-      <div class="card mt-12">\
-        <div class="text-sm mb-12" style="color:#999">题目导航（点击跳转）</div>\
-        <div style="display:flex;flex-wrap:wrap;gap:6px">\
+      <div class="card">\
+        <div class="text-sm mb-12" style="color:var(--color-text-muted)">题目导航（点击跳转）</div>\
+        <div class="q-nav-grid">\
           <span v-for="(q, i) in sessionQuestions" :key="q.id"\
             @click="jumpToQuestion(i)"\
+            class="q-nav-dot"\
             :style="{\
-              width:\'32px\',height:\'32px\',borderRadius:\'6px\',display:\'flex\',alignItems:\'center\',justifyContent:\'center\',\
-              fontSize:\'12px\',cursor:\'pointer\',fontWeight:\'500\',\
-              background: i === currentIndex ? \'#4A90D9\' : answers[q.id] ? \'#e8f0fe\' : \'#f0f0f0\',\
-              color: i === currentIndex ? \'white\' : answers[q.id] ? \'#4A90D9\' : \'#999\'\
+              background: i === currentIndex ? \'var(--color-primary)\' : answers[q.id] ? \'var(--color-primary-light)\' : \'var(--color-border-light)\',\
+              color: i === currentIndex ? \'white\' : answers[q.id] ? \'var(--color-primary)\' : \'var(--color-text-muted)\'\
             }">{{ i + 1 }}</span>\
         </div>\
       </div>\
@@ -506,10 +509,10 @@ createApp({
     \
     <div v-if="page === \'result\' && resultStats">\
       <div class="card text-center">\
-        <div v-if="isExamMode" class="text-sm mb-12" style="color:#c0392b;font-weight:600">\
+        <div v-if="isExamMode" class="text-sm mb-12" style="color:var(--color-exam);font-weight:600">\
           {{ currentExamYear }} 年真题\
         </div>\
-        <div class="score-circle" :style="{ borderColor: resultStats.rate >= 80 ? \'#27ae60\' : resultStats.rate >= 60 ? \'#f39c12\' : \'#e74c3c\' }">\
+        <div class="score-circle" :style="{ borderColor: resultStats.rate >= 80 ? \'var(--color-success)\' : resultStats.rate >= 60 ? \'var(--color-warning)\' : \'var(--color-danger)\' }">\
           <span :class="resultStats.rate >= 80 ? \'text-green\' : resultStats.rate >= 60 ? \'text-orange\' : \'text-red\'">{{ resultStats.rate }}%</span>\
         </div>\
         <div class="mt-12 text-lg">{{ resultStats.correct }} / {{ resultStats.total }}</div>\
@@ -545,42 +548,42 @@ createApp({
             <span style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px">{{ i + 1 }}. {{ q.question }}</span>\
           </div>\
           <div class="flex-row" style="gap:6px">\
-            <span :style="{ color: normalizeAnswer(answers[q.id] || \'\') === normalizeAnswer(q.answer) ? \'#27ae60\' : \'#e74c3c\', fontSize:\'18px\' }">\
+            <span :style="{ color: normalizeAnswer(answers[q.id] || \'\') === normalizeAnswer(q.answer) ? \'var(--color-success)\' : \'var(--color-danger)\', fontSize:\'18px\' }">\
               {{ normalizeAnswer(answers[q.id] || \'\') === normalizeAnswer(q.answer) ? \'✓\' : \'✗\' }}\
             </span>\
-            <span style="font-size:12px;color:#999">详情</span>\
+            <span style="font-size:12px;color:var(--color-text-muted)">详情</span>\
           </div>\
         </div>\
         <div class="review-expand">\
           <div style="margin-top:8px;font-size:15px;line-height:1.7;white-space:pre-wrap">{{ q.question }}</div>\
-          <div style="margin-top:8px;padding:8px 12px;background:#f0f8f0;border-radius:8px;font-size:14px">\
-            <span style="color:#27ae60;font-weight:600">正确答案：{{ q.answer }}</span>\
-            <span v-if="answers[q.id]" :style="{ color: normalizeAnswer(answers[q.id] || \'\') === normalizeAnswer(q.answer) ? \'#27ae60\' : \'#e74c3c\', marginLeft:\'12px\' }">\
+          <div style="margin-top:8px;padding:8px 12px;background:var(--color-success-bg);border-radius:var(--radius-sm);font-size:14px">\
+            <span style="color:var(--color-success);font-weight:600">正确答案：{{ q.answer }}</span>\
+            <span v-if="answers[q.id]" :style="{ color: normalizeAnswer(answers[q.id] || \'\') === normalizeAnswer(q.answer) ? \'var(--color-success)\' : \'var(--color-danger)\', marginLeft:\'12px\' }">\
               {{ normalizeAnswer(answers[q.id] || \'\') === normalizeAnswer(q.answer) ? \'✓ 回答正确\' : \'✗ 你的答案：\' + (answers[q.id] || \'未作答\') }}\
             </span>\
           </div>\
           <div v-for="(val, key) in q.options" :key="key" style="padding:8px 0;font-size:14px;display:flex;align-items:flex-start;gap:8px">\
-            <span v-if="parseAnswer(q.answer).includes(key)" style="color:#27ae60;font-weight:600;font-size:16px;flex-shrink:0">✓</span>\
-            <span v-else style="color:#ccc;font-size:16px;flex-shrink:0">○</span>\
-            <span :style="{ color: parseAnswer(q.answer).includes(key) ? \'#27ae60\' : \'#666\', fontWeight: parseAnswer(q.answer).includes(key) ? \'600\' : \'400\' }">\
+            <span v-if="parseAnswer(q.answer).includes(key)" style="color:var(--color-success);font-weight:600;font-size:16px;flex-shrink:0">✓</span>\
+            <span v-else style="color:var(--color-text-muted);font-size:16px;flex-shrink:0">○</span>\
+            <span :style="{ color: parseAnswer(q.answer).includes(key) ? \'var(--color-success)\' : \'var(--color-text-secondary)\', fontWeight: parseAnswer(q.answer).includes(key) ? \'600\' : \'400\' }">\
               {{ key }}. {{ val }}\
             </span>\
           </div>\
-          <div v-if="q.analysis || q.keyPoint || q.memoryTip" style="margin-top:8px;padding:10px 14px;background:#fafafa;border-radius:8px;font-size:13px;line-height:1.7">\
+          <div v-if="q.analysis || q.keyPoint || q.memoryTip" style="margin-top:8px;padding:10px 14px;background:var(--color-border-light);border-radius:var(--radius-sm);font-size:13px;line-height:1.7">\
             <div v-if="q.analysis" style="margin-bottom:6px">\
-              <span style="color:#2c3e50;font-weight:600">解析：</span>\
-              <span style="color:#333">{{ q.analysis }}</span>\
+              <span style="font-weight:600">解析：</span>\
+              <span>{{ q.analysis }}</span>\
             </div>\
             <div v-if="q.keyPoint" style="margin-bottom:4px">\
-              <span style="color:#2c3e50;font-weight:600">考点：</span>\
-              <span style="color:#555">{{ q.keyPoint }}</span>\
+              <span style="font-weight:600">考点：</span>\
+              <span>{{ q.keyPoint }}</span>\
             </div>\
             <div v-if="q.memoryTip" style="margin-bottom:4px">\
-              <span style="color:#2c3e50;font-weight:600">记忆要点：</span>\
-              <span style="color:#555">{{ q.memoryTip }}</span>\
+              <span style="font-weight:600">记忆要点：</span>\
+              <span>{{ q.memoryTip }}</span>\
             </div>\
           </div>\
-          <div v-else style="margin-top:8px;padding:8px 12px;background:#fff;border-radius:8px;font-size:13px;color:#999">\
+          <div v-else style="margin-top:8px;padding:8px 12px;background:var(--color-surface);border-radius:var(--radius-sm);font-size:13px;color:var(--color-text-muted)">\
             暂无解析\
           </div>\
           <div class="flex-row mt-12" style="gap:8px">\
