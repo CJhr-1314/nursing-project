@@ -1,5 +1,5 @@
-var CACHE_NAME = 'nursing-quiz-v3';
-var urlsToCache = ['index.html','app.js','questions_data.js','manifest.json','https://unpkg.com/vue@3/dist/vue.global.prod.js'];
+var CACHE_NAME = 'nursing-quiz-v4';
+var urlsToCache = ['index.html','app_v2.js','questions_data.js','manifest.json','https://unpkg.com/vue@3/dist/vue.global.prod.js'];
 
 self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(cache){return cache.addAll(urlsToCache)}))});
 self.addEventListener('fetch',function(e){e.respondWith(caches.match(e.request).then(function(r){return r||fetch(e.request)}))});
