@@ -438,8 +438,22 @@ createApp({
               {{ key }}. {{ val }}\
             </span>\
           </div>\
-          <div style="margin-top:8px;padding:8px 12px;background:#fff;border-radius:8px;font-size:13px;color:#999">\
-            解析：暂无解析，后续补充\
+          <div v-if="q.analysis || q.keyPoint || q.memoryTip" style="margin-top:8px;padding:10px 14px;background:#fafafa;border-radius:8px;font-size:13px;line-height:1.7">\
+            <div v-if="q.analysis" style="margin-bottom:6px">\
+              <span style="color:#2c3e50;font-weight:600">解析：</span>\
+              <span style="color:#333">{{ q.analysis }}</span>\
+            </div>\
+            <div v-if="q.keyPoint" style="margin-bottom:4px">\
+              <span style="color:#2c3e50;font-weight:600">考点：</span>\
+              <span style="color:#555">{{ q.keyPoint }}</span>\
+            </div>\
+            <div v-if="q.memoryTip" style="margin-bottom:4px">\
+              <span style="color:#2c3e50;font-weight:600">记忆要点：</span>\
+              <span style="color:#555">{{ q.memoryTip }}</span>\
+            </div>\
+          </div>\
+          <div v-else style="margin-top:8px;padding:8px 12px;background:#fff;border-radius:8px;font-size:13px;color:#999">\
+            暂无解析\
           </div>\
           <div class="flex-row mt-12" style="gap:8px">\
             <button class="btn btn-sm" :class="isStarred(q.id) ? \'btn-primary\' : \'btn-outline\'"\
