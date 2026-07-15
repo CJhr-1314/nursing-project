@@ -50,6 +50,12 @@ for (var i = 0; i < ALL_QUESTIONS.length; i++) {
   var ch = ALL_QUESTIONS[i].chapter;
   if (!seen[ch]) { seen[ch] = true; chapterNames.push(ch); }
 }
+chapterNames.sort(function(a, b) {
+  var numA = parseInt((a.match(/第(\d+)章/) || [])[1]) || 999;
+  var numB = parseInt((b.match(/第(\d+)章/) || [])[1]) || 999;
+  if (numA !== numB) return numA - numB;
+  return a.localeCompare(b, 'zh');
+});
 
 // ============ EXAM YEAR LIST ============
 var examYears = Object.keys(EXAM_PAPERS).sort();
